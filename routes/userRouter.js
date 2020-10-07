@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const User = require("../models/userModel");
+const bcrypt = require("bcryptjs");
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, passwordCheck, displayName } = req.body;
+    let { email, password, passwordCheck, displayName } = req.body;
 
     //validation error
 
@@ -21,7 +22,7 @@ router.post("/register", async (req, res) => {
         .json({ msg: "Enter the same password twice for verification." });
     }
 
-    const existingUser = await User.find({ email: email });
+    const existingUser = await User.findOne({ email: email });
 
     if (existingUser) {
       return res
@@ -32,8 +33,20 @@ router.post("/register", async (req, res) => {
     if (!displayName) {
       displayName = email;
     }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+
+    const newUser = new User({
+      email,
+      password: passwordHash,
+      displayName,
+    });
+
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
