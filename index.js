@@ -9,10 +9,6 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
 app.listen(PORT, () => {
   console.log(`The server has started on port ${PORT}`);
 });
@@ -30,3 +26,8 @@ mongoose.connect(
     console.log("MongoDB connection established");
   }
 );
+
+// set up routes
+const userRouter = require("./routes/userRouter");
+
+app.use("/users", userRouter);
