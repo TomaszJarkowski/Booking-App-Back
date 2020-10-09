@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const loginValidation = require("../validation/loginValidation");
 
 module.exports.register_post = async (req, res) => {
   try {
@@ -58,6 +59,12 @@ module.exports.login_post = async (req, res) => {
     //validate
     if (!email || !password) {
       return res.status(400).json({ msg: "Not all fields have been entered." });
+    }
+
+    try {
+      loginValidation(email, password);
+    } catch (err) {
+      return res.status(400).send({ error: err.message });
     }
 
     const user = await User.findOne({ email: email });
@@ -130,7 +137,6 @@ module.exports.auth_get = async (req, res) => {
       email: user.email,
     });
   } catch (err) {
-    console.log("Coś poszło nie tak");
     res.status(500).json({ error: err.message });
   }
 };
