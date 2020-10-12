@@ -6,7 +6,7 @@ const minLenghtPassword = {
   min: 7,
 };
 
-const loginValidation = async (email, password) => {
+const loginValidation = (email, password) => {
   if (!email || !password) {
     throw new Error("Not all fields have been entered.");
   }
@@ -21,16 +21,6 @@ const loginValidation = async (email, password) => {
 
   if (!validator.isLength(password, minLenghtPassword)) {
     throw new Error("The minimum password length is: 7");
-  }
-
-  const user = await User.findOne({ email: email });
-  if (!user) {
-    throw new Error("No account with this email has been registered.");
-  }
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    throw new Error("Invalid password.");
   }
 };
 

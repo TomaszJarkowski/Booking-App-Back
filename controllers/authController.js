@@ -17,6 +17,14 @@ module.exports.register_post = async (req, res) => {
       }
     })();
 
+    const existingUser = await User.findOne({ email: email });
+
+    if (existingUser) {
+      return res
+        .status(400)
+        .send({ error: "An account with this email already exists." });
+    }
+
     if (!displayName) {
       displayName = email;
     }
@@ -50,6 +58,17 @@ module.exports.login_post = async (req, res) => {
     })();
 
     const user = await User.findOne({ email: email });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).send({ error: "Invalid password." });
+    }
+
+    if (!user) {
+      return res
+        .status(400)
+        .send({ error: "No account with this email has been registered." });
+    }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     res.status(200).json({
