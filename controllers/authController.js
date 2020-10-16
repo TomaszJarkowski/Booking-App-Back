@@ -7,17 +7,16 @@ const registerValidation = require("../validation/registerValidation");
 module.exports.register_post = async (req, res) => {
   try {
     console.log(req.body);
-    let { email, password, passwordCheck, displayName } = req.body;
+    let { email, userName, password, passwordCheck } = req.body;
 
-    (async () => {
-      try {
-        await registerValidation(email, password, passwordCheck);
-      } catch (err) {
-        return res.status(400).send({ error: err.message });
-      }
-    })();
+    try {
+      registerValidation(email, userName, password, passwordCheck);
+    } catch (err) {
+      return res.status(400).send({ error: err.message });
+    }
 
     const existingUser = await User.findOne({ email: email });
+    const existingUserName = await User.findOne({ userName: userName });
 
     if (existingUser) {
       return res
@@ -25,8 +24,10 @@ module.exports.register_post = async (req, res) => {
         .send({ error: "An account with this email already exists." });
     }
 
-    if (!displayName) {
-      displayName = email;
+    if (existingUserName) {
+      return res
+        .status(400)
+        .send({ error: "An account with this username already exists." });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -34,8 +35,8 @@ module.exports.register_post = async (req, res) => {
 
     const newUser = new User({
       email,
+      userName,
       password: passwordHash,
-      displayName,
     });
 
     const savedUser = await newUser.save();
@@ -49,33 +50,31 @@ module.exports.login_post = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    (async () => {
-      try {
-        await loginValidation(email, password);
-      } catch (err) {
-        return res.status(400).send({ error: err.message });
-      }
-    })();
-
-    const user = await User.findOne({ email: email });
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).send({ error: "Invalid password." });
+    try {
+      loginValidation(email, password);
+    } catch (err) {
+      return res.status(400).send({ error: err.message });
     }
 
+    const user = await User.findOne({ email: email });
     if (!user) {
       return res
         .status(400)
         .send({ error: "No account with this email has been registered." });
     }
 
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).send({ error: "Invalid password." });
+    }
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+
     res.status(200).json({
       token,
       user: {
         id: user._id,
-        displayName: user.displayName,
+        userName: user.userName,
         email: user.email,
       },
     });
@@ -121,10 +120,12 @@ module.exports.auth_get = async (req, res) => {
   try {
     console.log(req.user);
     const user = await User.findById(req.user);
+    const books = await Book.find({ email: user.email });
     res.json({
-      displayName: user.displayName,
+      userName: user.userName,
       id: user._id,
       email: user.email,
+      books,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

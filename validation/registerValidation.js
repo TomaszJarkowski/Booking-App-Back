@@ -1,18 +1,25 @@
 const validator = require("validator");
-const User = require("../models/userModel");
 
 const minLenghtPassword = {
   min: 7,
 };
+const minUserName = {
+  min: 4,
+};
 
-const registerValidation = (email, password, passwordCheck) => {
-  if (!email || !password || !passwordCheck) {
+const registerValidation = (email, userName, password, passwordCheck) => {
+  if (!email || !userName || !password || !passwordCheck) {
     throw new Error("Not all fields have been entered.");
   }
   if (!validator.isEmail(email)) {
     throw new Error("Email is not correct");
   }
-
+  if (!validator.isLength(userName, minUserName)) {
+    throw new Error("The minimum username length is: 3");
+  }
+  if (!validator.isAlphanumeric(userName, "pl-PL")) {
+    throw new Error("The username must contain only numbers and letters");
+  }
   if (!validator.isAlphanumeric(password)) {
     throw new Error("The password must contain only numbers and letters");
   }

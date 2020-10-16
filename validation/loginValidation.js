@@ -1,6 +1,4 @@
 const validator = require("validator");
-const User = require("../models/userModel");
-const bcrypt = require("bcryptjs");
 
 const minLenghtPassword = {
   min: 7,
