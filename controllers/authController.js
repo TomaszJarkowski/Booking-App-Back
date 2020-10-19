@@ -5,6 +5,8 @@ const loginValidation = require("../validation/loginValidation");
 const registerValidation = require("../validation/registerValidation");
 const changeUsernameValidation = require("../validation/changeUsernameValidation");
 const changePasswordValidation = require("../validation/changePasswordValidation");
+const Book = require("../models/bookModel");
+
 module.exports.register_post = async (req, res) => {
   try {
     console.log(req.body);
@@ -148,6 +150,13 @@ module.exports.changePassword_put = async (req, res) => {
 module.exports.deleteUser_delete = async (req, res) => {
   try {
     const delitedUsers = await User.findByIdAndDelete(req.user);
+
+    try {
+      await Book.deleteMany({ userId: req.user });
+    } catch (e) {
+      console.log(e);
+    }
+
     res.json(delitedUsers);
   } catch (err) {
     res.status(500).json({ error: err.message });
