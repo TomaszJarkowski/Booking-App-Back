@@ -3,7 +3,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const loginValidation = require("../validation/loginValidation");
 const registerValidation = require("../validation/registerValidation");
-
+const changeUsernameValidation = require("../validation/changeUsernameValidation");
+const changePasswordValidation = require("../validation/changePasswordValidation");
 module.exports.register_post = async (req, res) => {
   try {
     console.log(req.body);
@@ -78,6 +79,67 @@ module.exports.login_post = async (req, res) => {
         email: user.email,
       },
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports.changeUsername_put = async (req, res) => {
+  try {
+    const { changeUsername, id } = req.body;
+    try {
+      changeUsernameValidation(changeUsername);
+    } catch (err) {
+      return res.status(400).send({ error: err.message });
+    }
+
+    const existingUserName = await User.findOne({ userName: changeUsername });
+    let user = await User.findOne({ _id: id });
+
+    if (existingUserName) {
+      return res
+        .status(400)
+        .send({ error: "An account with this username already exists." });
+    }
+    if (!user) {
+      return res.status(400).send({ error: "Something went wrong" });
+    }
+
+    user.userName = changeUsername;
+    await user.save();
+
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports.changePassword_put = async (req, res) => {
+  try {
+    const { oldPassword, newPassword, id } = req.body;
+    try {
+      changePasswordValidation(oldPassword, newPassword);
+    } catch (err) {
+      return res.status(400).send({ error: err.message });
+    }
+
+    let user = await User.findOne({ _id: id });
+
+    if (!user) {
+      return res.status(400).send({ error: "Something went wrong" });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).send({ error: "Invalid old password." });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(newPassword, salt);
+
+    user.password = passwordHash;
+    await user.save();
+    res.status(201).json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

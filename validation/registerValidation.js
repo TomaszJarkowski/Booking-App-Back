@@ -15,7 +15,7 @@ const registerValidation = (email, userName, password, passwordCheck) => {
     throw new Error("Email is not correct");
   }
   if (!validator.isLength(userName, minUserName)) {
-    throw new Error("The minimum username length is: 3");
+    throw new Error("The minimum username length is: 4");
   }
   if (!validator.isAlphanumeric(userName, "pl-PL")) {
     throw new Error("The username must contain only numbers and letters");
