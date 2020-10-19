@@ -29,7 +29,6 @@ const bookValidation = (
   if (!validator.isEmail(email)) {
     throw new Error("Email is not correct");
   }
-
   if (!validator.isAlphanumeric(firstName, "pl-PL")) {
     throw new Error("The first name must contain only numbers and letters");
   }

@@ -50,7 +50,6 @@ module.exports.book_post = async (req, res) => {
 
 module.exports.book_get = async (req, res) => {
   try {
-    console.log(req.body);
     const userId = req.body.userId;
     const books = await Book.find({ userId });
     res.json(books);
@@ -61,7 +60,6 @@ module.exports.book_get = async (req, res) => {
 
 module.exports.book_delete = async (req, res) => {
   try {
-    console.log(req.body);
     const bookToDelete = req.body.id;
     const delitedBook = await Book.findByIdAndDelete(bookToDelete);
     res.json(delitedBook);

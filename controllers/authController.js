@@ -9,7 +9,6 @@ const Book = require("../models/bookModel");
 
 module.exports.register_post = async (req, res) => {
   try {
-    console.log(req.body);
     let { email, userName, password, passwordCheck } = req.body;
 
     try {
@@ -189,7 +188,6 @@ module.exports.tokenIsValid_post = async (req, res) => {
 
 module.exports.auth_get = async (req, res) => {
   try {
-    console.log(req.user);
     const user = await User.findById(req.user);
     const books = await Book.find({ email: user.email });
     res.json({
