@@ -1,10 +1,10 @@
 {
-  "name": "mern-auth-back",
+  "name": "booking-app-back",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
