@@ -27,6 +27,12 @@ app.listen(PORT, () => {
   console.log(`The server has started on port ${PORT}`);
 });
 
+app.get("/", (req, res) => {
+  res.send({
+    text: "Welcome in Booking-App-Back",
+  });
+});
+
 // set up mongoose
 
 mongoose.connect(
