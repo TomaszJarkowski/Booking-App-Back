@@ -7,6 +7,7 @@ This backend handles things like:
 - user registrations
 - user login
 - user reservations
+- password reminder
 - deleting accounts
 - changing username
 - changing passwords
