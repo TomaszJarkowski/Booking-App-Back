@@ -6,6 +6,8 @@ const registerValidation = require("../validation/registerValidation");
 const changeUsernameValidation = require("../validation/changeUsernameValidation");
 const changePasswordValidation = require("../validation/changePasswordValidation");
 const Book = require("../models/bookModel");
+const mailer = require("../mail/mailer");
+const validator = require("validator");
 
 module.exports.register_post = async (req, res) => {
   try {
@@ -137,6 +139,36 @@ module.exports.changePassword_put = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(newPassword, salt);
+
+    user.password = passwordHash;
+    await user.save();
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports.forgotPassword_post = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email || !validator.isEmail(email)) {
+      return res.status(400).send({ error: "Email is not correct" });
+    }
+
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ error: "No account with this email has been registered." });
+    }
+
+    const password = "passwordReminder123";
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+
+    mailer.send(email, password);
 
     user.password = passwordHash;
     await user.save();

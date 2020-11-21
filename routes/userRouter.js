@@ -7,6 +7,7 @@ router.post("/login", authController.login_post);
 router.post("/tokenIsValid", authController.tokenIsValid_post);
 router.put("/changeUsername", authController.changeUsername_put);
 router.put("/changePassword", authController.changePassword_put);
+router.post("/forgotPassword", authController.forgotPassword_post);
 router.get("/", authMiddleware, authController.auth_get);
 router.delete("/deleteUser", authMiddleware, authController.deleteUser_delete);
 
