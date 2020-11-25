@@ -20,6 +20,12 @@ const changePasswordValidation = (oldPassword, newPassword) => {
   if (!validator.isLength(newPassword, minLenghtPassword)) {
     throw new Error("The minimum new password length is: 7");
   }
+  if (oldPassword.lenght > 16) {
+    throw new Error("The maximum old password length is: 16");
+  }
+  if (newPassword.lenght > 16) {
+    throw new Error("The maximum new password length is: 16");
+  }
 };
 
 module.exports = changePasswordValidation;

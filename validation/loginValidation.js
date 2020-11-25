@@ -17,6 +17,9 @@ const loginValidation = (email, password) => {
   if (!validator.isLength(password, minLenghtPassword)) {
     throw new Error("The minimum password length is: 7");
   }
+  if (password.lenght > 16) {
+    throw new Error("The maximum password length is: 16");
+  }
 };
 
 module.exports = loginValidation;

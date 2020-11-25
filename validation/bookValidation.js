@@ -51,6 +51,12 @@ const bookValidation = (
   if (!validator.isInt(dateYear)) {
     throw new Error("Incorect date year");
   }
+  if (firstName.lenght > 16) {
+    throw new Error("The maximum name length is: 16");
+  }
+  if (lastName.lenght > 16) {
+    throw new Error("The maximum last name length is: 16");
+  }
 };
 
 module.exports = bookValidation;

@@ -26,6 +26,12 @@ const registerValidation = (email, userName, password, passwordCheck) => {
   if (!validator.isLength(password, minLenghtPassword)) {
     throw new Error("The minimum password length is: 7");
   }
+  if (password.lenght > 16) {
+    throw new Error("The maximum password length is: 16");
+  }
+  if (userName.lenght > 16) {
+    throw new Error("The maximum username length is: 16");
+  }
   if (password != passwordCheck) {
     throw new Error("Enter the same password twice for verification.");
   }

@@ -14,6 +14,9 @@ const changeUsernameValidation = (changeUsername) => {
   if (!validator.isAlphanumeric(changeUsername, "pl-PL")) {
     throw new Error("The username must contain only numbers and letters");
   }
+  if (changeUsername.lenght > 16) {
+    throw new Error("The maximum username length is: 16");
+  }
 };
 
 module.exports = changeUsernameValidation;
