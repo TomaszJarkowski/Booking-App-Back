@@ -162,9 +162,28 @@ module.exports.forgotPassword_post = async (req, res) => {
         .status(400)
         .send({ error: "No account with this email has been registered." });
     }
-
-    const password = "passwordReminder123";
-
+    const possibleLetters = [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+    ];
+    const possibleNumbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    let password = "";
+    for (let i = 0; i < 5; i++) {
+      password += possibleLetters[Math.floor(Math.random() * 14)];
+      password += possibleNumbers[Math.floor(Math.random() * 9)];
+    }
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
